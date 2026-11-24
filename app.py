@@ -298,6 +298,11 @@ BIDI_OBSERVER_JS = """
         const rtlBlocks = Array.from(root.querySelectorAll ? root.querySelectorAll('.prose [dir="rtl"]') : []);
         if (root.matches && root.matches('.prose [dir="rtl"]')) {
             rtlBlocks.unshift(root);
+        } else if (root.closest) {
+            const ancestorRtl = root.closest('.prose [dir="rtl"]');
+            if (ancestorRtl && !rtlBlocks.includes(ancestorRtl)) {
+                rtlBlocks.unshift(ancestorRtl);
+            }
         }
         for (const rtlEl of rtlBlocks) {
             const walker = document.createTreeWalker(rtlEl, NodeFilter.SHOW_TEXT);
@@ -307,7 +312,8 @@ BIDI_OBSERVER_JS = """
                 const parent = cur.parentElement;
                 if (!parent) continue;
                 if (parent.closest("pre, code, a[href], bdi, script, style, textarea, input")) continue;
-                if (parent.closest('[dir="ltr"]')) continue;
+                const nearestDir = parent.closest("[dir]");
+                if (nearestDir && nearestDir !== rtlEl && nearestDir.getAttribute("dir") === "ltr") continue;
                 LTR_RUN_RE.lastIndex = 0;
                 if (LTR_RUN_RE.test(cur.nodeValue || "")) {
                     textNodes.push(cur);
