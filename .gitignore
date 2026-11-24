@@ -1,0 +1,23 @@
+# Environment secrets & Google credentials
+.env
+.env.*
+!.env.example
+*credentials*.json
+*service-account*.json
+*service_account*.json
+
+# Python bytecode & virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# Legacy raw CV PDFs containing private contact info (kept locally only)
+cv.pdf
+cv.original.pdf
+
+# Gradio & test caches
+.gradio/
+.pytest_cache/

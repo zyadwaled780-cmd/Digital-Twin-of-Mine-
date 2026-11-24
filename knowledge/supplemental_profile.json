@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "id": "personality_communication_style",
+      "section": "personality_communication_style",
+      "status": "quarantined",
+      "source_note": "Derived from legacy summary.txt; requires explicit owner confirmation before enabling.",
+      "content": "Age: 19 years old, based in 6th of October City, Egypt. Calm, patient, and detail-oriented; prefers understanding the root problem thoroughly and listening carefully before responding."
+    },
+    {
+      "id": "depi_team_context",
+      "section": "project_context_supplemental",
+      "status": "quarantined",
+      "source_note": "Derived from legacy summary.txt; requires explicit owner confirmation that DEPI team details belong in active answers.",
+      "content": "AI Customer Support Agent was built as a team project during the Digital Egypt Pioneers Initiative (DEPI) program using Python, Ollama, and RAG."
+    },
+    {
+      "id": "legacy_cv_conflicts",
+      "section": "legacy_conflicts",
+      "status": "conflict",
+      "source_note": "Conflicts with active CV (knowledge/cv_current.md); never included in active retrieval.",
+      "content": "Legacy summary.txt and old cv.pdf list gmail-ollama-summarizer (phi3:mini), Gradio, llama3.2:3b, and Microsoft Excel, which were removed or replaced in the new CV."
+    }
+  ]
+}

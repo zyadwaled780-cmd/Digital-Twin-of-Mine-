@@ -1,0 +1,211 @@
+{
+  "schema_version": 4,
+  "active_cv_file": "knowledge/cv_current.md",
+  "active_cv_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3",
+  "supplemental_file": "knowledge/supplemental_profile.json",
+  "supplemental_sha256": "838da45427db570a0b0b7f2040b602dec2087c2fd60009455da5cfb7c3e38bfe",
+  "combined_sha256": "ef87f99df8ee1c3c9a131c4ec30b1cad0c8727a0df7733c68736a9619f216865",
+  "ingested_at": "2026-11-24T07:22:49+00:00",
+  "chunks": [
+    {
+      "chunk_id": "cv::header",
+      "source": "active_cv",
+      "section": "header",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Zyad Waled Talat\nAI and Automation Specialist",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::public_profile",
+      "source": "active_cv",
+      "section": "public_profile",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Location: 6th of October City, Egypt\nLinkedIn: linkedin.com/in/zyad-waled-4048a33a0",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::career_objective",
+      "source": "active_cv",
+      "section": "career_objective",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "I help businesses lower costs, improve work efficiency, and automate repetitive tasks that take much time and cost. Improving your work is my concern, so you don't have to worry.",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::education",
+      "source": "active_cv",
+      "section": "education",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Bachelor of Business Information Systems (BIS), Faculty of Commerce, Capital University\nSecond Year | Expected Graduation: 2028 | GPA: 3.4",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::experience",
+      "source": "active_cv",
+      "section": "experience",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Software Tester - UTest: Performed software testing and bug reporting for client applications\nAI Data Annotator - Outlier: Conducted AI data annotation and evaluation tasks",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::experience::software_tester",
+      "source": "active_cv",
+      "section": "experience",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Software Tester - UTest: Performed software testing and bug reporting for client applications",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::experience::ai_data_annotator",
+      "source": "active_cv",
+      "section": "experience",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "AI Data Annotator - Outlier: Conducted AI data annotation and evaluation tasks",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::courses_and_certifications",
+      "source": "active_cv",
+      "section": "courses_and_certifications",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Digital Egypt Pioneers Initiative (DEPI) - AI Automation Program track, Eyouth\nForward Program - McKinsey & Company | 2025/2026\nCustomer Experience (CX) for Business Success - HP LIFE 2024/2025\nArtificial Intelligence Fundamentals - IBM SkillsBuild 2025/2026\nGCI World 2026 September - Matsuo-Iwasawa Laboratory",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::courses_and_certifications::digital_egypt_pioneers_initiative_depi",
+      "source": "active_cv",
+      "section": "courses_and_certifications",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Digital Egypt Pioneers Initiative (DEPI) - AI Automation Program track, Eyouth",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::courses_and_certifications::forward_program",
+      "source": "active_cv",
+      "section": "courses_and_certifications",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Forward Program - McKinsey & Company | 2025/2026",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::courses_and_certifications::customer_experience_cx_for_business_succ",
+      "source": "active_cv",
+      "section": "courses_and_certifications",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Customer Experience (CX) for Business Success - HP LIFE 2024/2025",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::courses_and_certifications::artificial_intelligence_fundamentals",
+      "source": "active_cv",
+      "section": "courses_and_certifications",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Artificial Intelligence Fundamentals - IBM SkillsBuild 2025/2026",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::courses_and_certifications::gci_world_2026_september",
+      "source": "active_cv",
+      "section": "courses_and_certifications",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "GCI World 2026 September - Matsuo-Iwasawa Laboratory",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::technical_skills",
+      "source": "active_cv",
+      "section": "technical_skills",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "n8n, SQL, Supabase, Ollama, Hugging Face, Git / GitHub, Docker, RAG (Retrieval-Augmented Generation), Python, JavaScript, Dart, Flutter",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::soft_skills",
+      "source": "active_cv",
+      "section": "soft_skills",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Active Listening, Problem Solving, Patience, Attention to Detail, Adaptability",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::projects",
+      "source": "active_cv",
+      "section": "projects",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Digital Twin of Me: https://github.com/zyadwaled780-cmd/Digital-Twin-of-Mine-\nAI Customer Support Agent: https://github.com/samirhanna11/ai-customer-support-agent\nMy Portfolio: https://github.com/zyadwaled780-cmd/portfolio\nAI-learning-app: https://github.com/zyadwaled780-cmd/AI-Learning-app",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::projects::digital_twin_of_me",
+      "source": "active_cv",
+      "section": "projects",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "Digital Twin of Me: https://github.com/zyadwaled780-cmd/Digital-Twin-of-Mine-",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::projects::ai_customer_support_agent",
+      "source": "active_cv",
+      "section": "projects",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "AI Customer Support Agent: https://github.com/samirhanna11/ai-customer-support-agent",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::projects::my_portfolio",
+      "source": "active_cv",
+      "section": "projects",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "My Portfolio: https://github.com/zyadwaled780-cmd/portfolio",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    },
+    {
+      "chunk_id": "cv::projects::ai",
+      "source": "active_cv",
+      "section": "projects",
+      "precedence": 1,
+      "visibility": "public",
+      "content": "AI-learning-app: https://github.com/zyadwaled780-cmd/AI-Learning-app",
+      "source_file": "knowledge/cv_current.md",
+      "source_sha256": "04a6e77cc6a5594fed3f39e25db51e4109ec787c2b10ae884e3053ebda3f37e3"
+    }
+  ]
+}
