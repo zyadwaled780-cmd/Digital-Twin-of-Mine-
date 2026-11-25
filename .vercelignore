@@ -1,0 +1,17 @@
+# Secrets & local credentials
+.env
+.env.*
+*credentials*.json
+*service-account*.json
+*service_account*.json
+
+# Legacy raw CV PDFs containing private contact info
+cv.pdf
+cv.original.pdf
+
+# Caches, local tooling, and tests
+__pycache__/
+.gradio/
+.pytest_cache/
+.git/
+test*.py

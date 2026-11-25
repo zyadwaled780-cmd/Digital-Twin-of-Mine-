@@ -19,6 +19,7 @@ from providers import (
     run_chat_turn,
 )
 from tools import tools, handle_tool_calls
+from twin_service import extract_text, normalize_history, process_chat_turn
 
 GROQ_URL = GROQ_DEFAULT_URL
 MODEL = GROQ_DEFAULT_MODEL
@@ -76,32 +77,12 @@ def log_startup_diagnostics() -> None:
 
 def _extract_text(content) -> str:
     """Normalize Gradio message content (str or multimodal block list) to plain text."""
-    if isinstance(content, str):
-        return content
-    if isinstance(content, list):
-        parts = []
-        for item in content:
-            if isinstance(item, str):
-                parts.append(item)
-            elif isinstance(item, dict) and "text" in item:
-                parts.append(str(item["text"]))
-        return "\n".join(p for p in parts if p)
-    return str(content) if content is not None else ""
+    return extract_text(content)
 
 
 def _normalize_history(history) -> list[dict]:
     """Convert Gradio chat history into clean OpenAI-compatible role/content dicts."""
-    clean = []
-    for entry in history or []:
-        if not isinstance(entry, dict):
-            continue
-        role = entry.get("role")
-        if role not in ("user", "assistant"):
-            continue
-        text = _extract_text(entry.get("content"))
-        if text:
-            clean.append({"role": role, "content": text})
-    return clean
+    return normalize_history(history)
 
 
 def validate_user_message(message):
@@ -120,17 +101,13 @@ def chat(message, history):
     if not is_valid:
         return rejection_msg
 
-    system_prompt = build_turn_system_prompt(query=text, history=clean_history)
-    config = ProviderConfig.from_env()
-
-    return run_chat_turn(
-        user_message=text,
+    result = process_chat_turn(
+        text,
         history=clean_history,
-        system_prompt=system_prompt,
-        tools=tools,
-        tool_handler=handle_tool_calls,
-        config=config,
+        chat_runner=run_chat_turn,
+        config=ProviderConfig.from_env(),
     )
+    return result.get("reply") or result.get("error") or ""
 
 
 N8N_DARK_THEME = gr.themes.Base(

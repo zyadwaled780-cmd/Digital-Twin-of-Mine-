@@ -821,15 +821,18 @@ class KnowledgeStore:
                 except (json.JSONDecodeError, OSError):
                     pass
 
-            rebuilt = build_knowledge_index(
-                cv_path=cv_path,
-                supplemental_path=supp_path,
-                output_path=self.index_file,
-                knowledge_dir=self.knowledge_dir,
-                active_source_file=self.active_source_file,
-                trusted_root=self.trusted_root,
-                write_index=True,
-            )
+            build_kwargs = {
+                "cv_path": cv_path,
+                "supplemental_path": supp_path,
+                "output_path": self.index_file,
+                "knowledge_dir": self.knowledge_dir,
+                "active_source_file": self.active_source_file,
+                "trusted_root": self.trusted_root,
+            }
+            try:
+                rebuilt = build_knowledge_index(**build_kwargs, write_index=True)
+            except OSError:
+                rebuilt = build_knowledge_index(**build_kwargs, write_index=False)
             self._cached_index = rebuilt
             return rebuilt
 

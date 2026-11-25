@@ -2,7 +2,7 @@
 
 An AI-powered digital twin chatbot that helps visitors explore Zyad Waled Talat's background, skills, and projects through conversation.
 
-Built with **Python**, **Gradio** (`ChatInterface`), **Groq** (primary LLM) + opt-in **Google Gemini** (fallback), **Telegram** notifications, and optional **Google Sheets** logging.
+Built with **Python**, **Gradio** (`ChatInterface`) for local/PaaS runs + a lightweight **Vercel Python Serverless API + bilingual web UI** ([public/index.html](public/index.html), [api/chat.py](api/chat.py)), **Groq** (primary LLM) + opt-in **Google Gemini** (fallback), **Telegram** notifications, and optional **Google Sheets** logging.
 
 ## Supported Features
 
@@ -60,5 +60,6 @@ Standalone smoke scripts default to **offline dry-run mode** and require `--live
 
 ## Deployment & Portfolio Integration
 
+- **Vercel Serverless (Free Hobby Tier, No Credit Card):** Configured via [vercel.json](vercel.json), [pyproject.toml](pyproject.toml) (Gradio-free backend deps), [.vercelignore](.vercelignore), [public/index.html](public/index.html), [api/chat.py](api/chat.py), and [api/health.py](api/health.py). See [DEPLOY.md](DEPLOY.md#6-alternative-deploying-on-vercel-free-hobby-tier-no-credit-card).
 - **Render Blueprint / Web Service:** Defined in [render.yaml](render.yaml) (`buildCommand: pip install -r requirements.txt`, `startCommand: python app.py`, `healthCheckPath: /`). Full environment variable and deployment checklist in [DEPLOY.md](DEPLOY.md).
 - **Portfolio Integration Guide:** See [docs/TWIN_EMBED.md](docs/TWIN_EMBED.md).

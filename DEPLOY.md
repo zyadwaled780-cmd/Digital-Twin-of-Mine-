@@ -54,3 +54,24 @@ Configure these under **Environment → Environment Variables** in Render (never
 
 ## 5. Cold Starts on Free Tier
 Render's free web service spins down after ~15 minutes of inactivity and typically takes **~30–60 seconds** to wake up on the first request. See [docs/TWIN_EMBED.md](docs/TWIN_EMBED.md).
+
+---
+
+## 6. Alternative: Deploying on Vercel (Free Hobby Tier, No Credit Card)
+
+This repository also includes a Gradio-free Python serverless API and standalone/embeddable Light/Dark bilingual web UI configured for Vercel's free Hobby plan:
+
+- **Static UI:** [public/index.html](public/index.html) (served at `/`, reads `?__theme=light|dark`, supports English + Egyptian Arabic RTL/LTR `<bdi dir="ltr">` isolation, and works both standalone and inside an `<iframe>`).
+- **Python Serverless Functions:** [api/chat.py](api/chat.py) (`POST /api/chat`) and [api/health.py](api/health.py) (`GET /api/health`), backed by [twin_service.py](twin_service.py).
+- **Packaging & Config:** [pyproject.toml](pyproject.toml) (excludes `gradio` on Vercel so serverless bundles stay small) and [vercel.json](vercel.json) (`framework: null`, `outputDirectory: "public"`, `frame-ancestors` CSP allowing `https://zyadwaled780-cmd.github.io`), plus [.vercelignore](.vercelignore).
+
+### Vercel Setup Steps
+1. Sign in at `https://vercel.com/new` with GitHub on the **Hobby (Free)** tier (no credit card required).
+2. Import **`zyadwaled780-cmd/Digital-Twin-of-Mine-`** (`main` branch).
+3. Keep the detected project settings (`vercel.json` + `pyproject.toml` configure `public/` and `api/*.py`).
+4. Under **Environment Variables**, add secrets (never commit values):
+   - `GROQ_API_KEY` *(required)*
+   - `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` *(optional — Telegram alerts)*
+   - `GEMINI_API_KEY` and `LLM_FALLBACK_ENABLED` = `true` *(optional — Gemini fallback)*
+   - `GOOGLE_SHEET_ID` and `GOOGLE_CREDENTIALS_JSON` *(optional — Google Sheets)*
+5. Click **Deploy**, wait for completion, verify `GET /api/health` (`200`) and live English + Arabic chats on your `https://YOUR-PROJECT.vercel.app` URL, then configure `DIGITAL_TWIN_CONFIG.liveUrl` in the portfolio repository.

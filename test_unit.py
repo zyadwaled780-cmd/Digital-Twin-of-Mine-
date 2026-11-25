@@ -1,5 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import redirect_stdout
+from http.server import ThreadingHTTPServer
 import io
 import json
 import os
@@ -8,6 +9,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
+import tomllib
 from types import SimpleNamespace
 import unittest
 from unittest.mock import MagicMock, patch
@@ -16,6 +19,8 @@ import openai
 import requests
 from google.genai import errors as genai_errors
 
+from api import chat as api_chat
+from api import health as api_health
 import app
 import context
 import ingest_cv
@@ -28,6 +33,7 @@ import test_telegram
 import test_tools
 import test_ui_mock
 import tools
+import twin_service
 
 REPO_ROOT = Path(__file__).resolve().parent
 
@@ -995,6 +1001,7 @@ class TestAppUIAndIsolatedStartup(unittest.TestCase):
         dest = Path(tmpdir)
         for filename in (
             "app.py",
+            "twin_service.py",
             "context.py",
             "input_guard.py",
             "knowledge_base.py",
@@ -1129,6 +1136,182 @@ class TestAppUIAndIsolatedStartup(unittest.TestCase):
 
         en_prompt = context.build_turn_system_prompt("Hola, ¿qué proyectos tiene Zyad?")
         self.assertIn("English and Arabic are supported", en_prompt)
+
+
+class TestVercelServerlessAndReadOnlyStore(unittest.TestCase):
+    def test_knowledge_store_readonly_filesystem_fallback(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            kdir = root / "knowledge"
+            kdir.mkdir()
+            for fname in ("active_source.json", "cv_current.md", "supplemental_profile.json"):
+                shutil.copy2(REPO_ROOT / "knowledge" / fname, kdir / fname)
+            store = kb.KnowledgeStore(
+                knowledge_dir=kdir,
+                index_file=kdir / "index.json",
+                active_source_file=kdir / "active_source.json",
+                trusted_root=root,
+            )
+            with patch("knowledge_base.atomic_write_text", side_effect=OSError(30, "Read-only file system")):
+                idx = store.get_index(force_rebuild=True)
+            self.assertEqual(idx["active_cv_file"], "knowledge/cv_current.md")
+            self.assertTrue(idx["chunks"])
+            self.assertFalse((kdir / "index.json").exists())
+            cached = store.get_index()
+            self.assertIs(cached, idx)
+
+    def test_twin_service_guards_and_health_sanitization(self):
+        with patch("twin_service.run_chat_turn") as mock_runner:
+            empty_res = twin_service.process_chat_turn("   ", [], chat_runner=mock_runner)
+            self.assertFalse(empty_res["ok"])
+            self.assertTrue(empty_res["empty"])
+            self.assertTrue(empty_res["rejected"])
+
+            bad_res = twin_service.process_chat_turn("asdfghjkl", [], chat_runner=mock_runner)
+            self.assertTrue(bad_res["ok"])
+            self.assertFalse(bad_res["empty"])
+            self.assertTrue(bad_res["rejected"])
+            self.assertIn("clear question", bad_res["reply"])
+        mock_runner.assert_not_called()
+
+        with patch.dict(
+            os.environ,
+            {
+                "GROQ_API_KEY": "SECRET_GROQ_XYZ",
+                "GEMINI_API_KEY": "SECRET_GEM_XYZ",
+                "TELEGRAM_BOT_TOKEN": "SECRET_TG_XYZ",
+                "TELEGRAM_CHAT_ID": "99887766",
+                "GOOGLE_CREDENTIALS_JSON": '{"private_key":"SECRET_GS_XYZ"}',
+            },
+            clear=False,
+        ):
+            ok_res = twin_service.process_chat_turn(
+                "What projects has Zyad built?",
+                [{"role": "user", "content": "hi"}],
+                chat_runner=lambda **kwargs: "Projects answer grounded in CV",
+            )
+            self.assertEqual(ok_res["reply"], "Projects answer grounded in CV")
+            self.assertFalse(ok_res["rejected"])
+            health = twin_service.get_health_payload()
+
+        self.assertEqual(health["status"], "ok")
+        self.assertIn("knowledge", health)
+        self.assertIn("providers", health)
+        serialized = json.dumps(health)
+        for secret in ("SECRET_GROQ_XYZ", "SECRET_GEM_XYZ", "SECRET_TG_XYZ", "99887766", "SECRET_GS_XYZ"):
+            self.assertNotIn(secret, serialized)
+
+    def _run_with_server(self, handler_cls, fn):
+        server = ThreadingHTTPServer(("127.0.0.1", 0), handler_cls)
+        port = server.server_address[1]
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            fn(f"http://127.0.0.1:{port}")
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+
+    def test_vercel_health_and_chat_http_handlers(self):
+        def check_health(base_url: str):
+            opt = requests.options(
+                f"{base_url}/api/health",
+                headers={"Origin": "https://zyadwaled780-cmd.github.io"},
+                timeout=5,
+            )
+            self.assertEqual(opt.status_code, 204)
+            self.assertEqual(opt.headers.get("Access-Control-Allow-Origin"), "https://zyadwaled780-cmd.github.io")
+
+            res = requests.get(
+                f"{base_url}/api/health",
+                headers={"Origin": "https://zyadwaled780-cmd.github.io"},
+                timeout=5,
+            )
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.headers.get("Access-Control-Allow-Origin"), "https://zyadwaled780-cmd.github.io")
+            self.assertEqual(res.headers.get("Cache-Control"), "no-store")
+            data = res.json()
+            self.assertEqual(data["status"], "ok")
+            self.assertEqual(data["knowledge"]["active_cv_file"], "knowledge/cv_current.md")
+
+        self._run_with_server(api_health.handler, check_health)
+
+        def check_chat(base_url: str):
+            opt = requests.options(
+                f"{base_url}/api/chat",
+                headers={"Origin": "https://zyad-digital-twin.vercel.app"},
+                timeout=5,
+            )
+            self.assertEqual(opt.status_code, 204)
+            self.assertEqual(opt.headers.get("Access-Control-Allow-Origin"), "https://zyad-digital-twin.vercel.app")
+
+            empty_res = requests.post(f"{base_url}/api/chat", json={"message": "   "}, timeout=5)
+            self.assertEqual(empty_res.status_code, 400)
+            self.assertTrue(empty_res.json().get("rejected"))
+
+            bad_json = requests.post(
+                f"{base_url}/api/chat",
+                data="{bad json",
+                headers={"Content-Type": "application/json"},
+                timeout=5,
+            )
+            self.assertEqual(bad_json.status_code, 400)
+
+            oversized_body = json.dumps({"message": "x" * 70000})
+            big_res = requests.post(
+                f"{base_url}/api/chat",
+                data=oversized_body,
+                headers={"Content-Type": "application/json"},
+                timeout=5,
+            )
+            self.assertEqual(big_res.status_code, 413)
+
+            with patch(
+                "twin_service.run_chat_turn",
+                side_effect=[
+                    "Zyad studies Business Information Systems at Capital University (GPA 3.4).",
+                    "زياد وليد طلعت متخصص AI و Automation، ولغة `C#` مش مذكورة في السيرة الذاتية بتاعته.",
+                ],
+            ):
+                en_res = requests.post(
+                    f"{base_url}/api/chat",
+                    json={"message": "What is Zyad's education and GPA?", "history": []},
+                    timeout=5,
+                )
+                self.assertEqual(en_res.status_code, 200)
+                self.assertIn("GPA 3.4", en_res.json()["reply"])
+                self.assertFalse(en_res.json()["rejected"])
+
+                ar_res = requests.post(
+                    f"{base_url}/api/chat",
+                    json={"message": "أهلاً! مين زياد وبيشتغل بـ C# ولا إيه؟", "history": []},
+                    timeout=5,
+                )
+                self.assertEqual(ar_res.status_code, 200)
+                self.assertIn("زياد وليد طلعت", ar_res.json()["reply"])
+                self.assertFalse(ar_res.json()["rejected"])
+
+        self._run_with_server(api_chat.handler, check_chat)
+
+    def test_vercel_packaging_and_config_exclude_gradio(self):
+        pyproj = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+        deps = [d.lower() for d in pyproj["project"]["dependencies"]]
+        self.assertTrue(deps)
+        self.assertTrue(all("gradio" not in d for d in deps))
+
+        vcfg = json.loads((REPO_ROOT / "vercel.json").read_text(encoding="utf-8"))
+        self.assertIsNone(vcfg["framework"])
+        self.assertEqual(vcfg["outputDirectory"], "public")
+        fn_cfg = vcfg["functions"]["api/*.py"]
+        self.assertNotIn("knowledge", fn_cfg["excludeFiles"])
+        headers = vcfg["headers"][0]["headers"]
+        csp = next(h["value"] for h in headers if h["key"] == "Content-Security-Policy")
+        self.assertIn("https://zyadwaled780-cmd.github.io", csp)
+
+        for rel in ("twin_service.py", "api/health.py", "api/chat.py"):
+            src = (REPO_ROOT / rel).read_text(encoding="utf-8")
+            self.assertNotIn("import gradio", src)
 
 
 if __name__ == "__main__":

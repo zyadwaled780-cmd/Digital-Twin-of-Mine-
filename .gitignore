@@ -18,6 +18,7 @@ env/
 cv.pdf
 cv.original.pdf
 
-# Gradio & test caches
+# Gradio, Vercel & test caches
 .gradio/
+.vercel/
 .pytest_cache/

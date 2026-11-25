@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zyad Waled Talat — Digital Twin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <script>
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var q = (params.get("__theme") || "").trim().toLowerCase();
+        var theme = q === "light" || q === "dark" ? q : "";
+        if (!theme) {
+          var saved = (localStorage.getItem("twin_theme") || "").trim().toLowerCase();
+          if (saved === "light" || saved === "dark") theme = saved;
+        }
+        if (!theme && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+          theme = "light";
+        }
+        if (theme !== "light") theme = "dark";
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.classList.toggle("dark", theme === "dark");
+      } catch (_) {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.documentElement.classList.add("dark");
+      }
+    })();
+  </script>
+  <style>
+    :root,
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #f7f8fb;
+      --surface: #ffffff;
+      --surface-alt: #f1f3f8;
+      --surface-user: #fff0ed;
+      --text: #181c26;
+      --text-muted: #525d73;
+      --border: #d6dce8;
+      --border-strong: #cbd3e3;
+      --accent: #ff6d5a;
+      --accent-hover: #e85b48;
+      --accent-soft: #fff0ed;
+      --accent-border: rgba(255, 109, 90, 0.35);
+      --code-bg: #eef1f6;
+      --link: #d94836;
+      --link-hover: #b83525;
+      --btn-sec-bg: #eef1f6;
+      --btn-sec-hover: #e2e7f0;
+      --error-bg: #fef2f2;
+      --error-border: #fecaca;
+      --error-text: #991b1b;
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #0e0f14;
+      --surface: #151821;
+      --surface-alt: #1b1f2b;
+      --surface-user: #241b1e;
+      --text: #e8eaf0;
+      --text-muted: #9aa3b2;
+      --border: #2a3040;
+      --border-strong: #2e3547;
+      --accent: #ff6d5a;
+      --accent-hover: #ff8270;
+      --accent-soft: #2a2024;
+      --accent-border: rgba(255, 109, 90, 0.42);
+      --code-bg: #232838;
+      --link: #ff8c7a;
+      --link-hover: #ffaba0;
+      --btn-sec-bg: #232838;
+      --btn-sec-hover: #2e3547;
+      --error-bg: #2a181c;
+      --error-border: #6b2931;
+      --error-text: #fca5a5;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Cairo", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .twin-app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      max-width: 920px;
+      margin: 0 auto;
+      background-color: var(--bg);
+    }
+
+    .twin-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+
+    body.is-embedded .twin-header {
+      padding: 10px 14px;
+    }
+
+    .twin-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .twin-avatar {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: linear-gradient(135deg, #ff6d5a, #d94836);
+    }
+
+    .twin-title-wrap {
+      min-width: 0;
+    }
+
+    .twin-title {
+      margin: 0;
+      font-size: 0.96rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .twin-subtitle {
+      margin: 2px 0 0;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .twin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 32px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: var(--btn-sec-bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      background-color: var(--btn-sec-hover);
+    }
+
+    .icon-btn:focus-visible,
+    .chip-btn:focus-visible,
+    .copy-btn:focus-visible,
+    .send-btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .composer-input:focus-visible {
+      outline: none;
+    }
+
+    .twin-messages {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+
+    .welcome-card {
+      margin: auto 0;
+      padding: 18px;
+      border-radius: 14px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .welcome-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.04rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .welcome-card p {
+      margin: 0 0 10px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+
+    .welcome-ar {
+      direction: rtl;
+      text-align: right;
+      unicode-bidi: isolate;
+      font-family: "Cairo", "Inter", system-ui, sans-serif;
+    }
+
+    .chips-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip-btn {
+      border: 1px solid var(--border);
+      background-color: var(--surface-alt);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      line-height: 1.35;
+      text-align: start;
+      cursor: pointer;
+      max-width: 100%;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .chip-btn:hover {
+      background-color: var(--accent-soft);
+      border-color: var(--accent-border);
+    }
+
+    .chip-btn[dir="rtl"] {
+      direction: rtl;
+      text-align: right;
+      font-family: "Cairo", "Inter", system-ui, sans-serif;
+    }
+
+    .msg-row {
+      display: flex;
+      flex-direction: column;
+      max-width: 92%;
+      min-width: 0;
+    }
+
+    .msg-row--user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .msg-row--assistant {
+      align-self: flex-start;
+      align-items: flex-start;
+      width: 100%;
+      max-width: 94%;
+    }
+
+    .msg-bubble {
+      max-width: 100%;
+      min-width: 0;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+      color: var(--text);
+      font-size: 0.93rem;
+      line-height: 1.6;
+      box-shadow: var(--shadow-sm);
+      overflow-wrap: break-word;
+    }
+
+    .msg-row--user .msg-bubble {
+      background-color: var(--surface-user);
+      border-color: var(--accent-border);
+    }
+
+    .msg-row--error .msg-bubble {
+      background-color: var(--error-bg);
+      border-color: var(--error-border);
+      color: var(--error-text);
+    }
+
+    .msg-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+      padding: 0 2px;
+    }
+
+    .copy-btn {
+      border: 1px solid var(--border);
+      background-color: var(--surface-alt);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-family: inherit;
+      font-size: 0.74rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .copy-btn:hover {
+      color: var(--text);
+      background-color: var(--btn-sec-hover);
+    }
+
+    /* Prose & Bidi isolation rules matching app.py */
+    .prose {
+      min-width: 0;
+      max-width: 100%;
+      font-family: "Inter", "Cairo", system-ui, sans-serif;
+    }
+
+    .prose > :first-child {
+      margin-top: 0;
+    }
+
+    .prose > :last-child {
+      margin-bottom: 0;
+    }
+
+    .prose p,
+    .prose ul,
+    .prose ol,
+    .prose blockquote,
+    .prose h1,
+    .prose h2,
+    .prose h3 {
+      margin: 0 0 0.6em;
+    }
+
+    .prose h1,
+    .prose h2,
+    .prose h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .prose [dir="rtl"] {
+      direction: rtl;
+      text-align: right;
+      unicode-bidi: isolate;
+      font-family: "Cairo", "Inter", system-ui, sans-serif;
+    }
+
+    .prose [dir="ltr"] {
+      direction: ltr;
+      text-align: left;
+      unicode-bidi: isolate;
+    }
+
+    .prose :is(ul, ol) {
+      padding-inline-start: 1.45em;
+      padding-inline-end: 0;
+      list-style-position: outside;
+    }
+
+    .prose li {
+      text-align: start;
+      margin-bottom: 0.3em;
+    }
+
+    .prose blockquote {
+      border-inline-start: 3px solid var(--accent);
+      padding-inline-start: 10px;
+      color: var(--text-muted);
+    }
+
+    .prose :is(pre, code, a[href], bdi) {
+      direction: ltr;
+      unicode-bidi: isolate;
+    }
+
+    .prose code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.86em;
+      background: var(--code-bg);
+      color: var(--text);
+      border-radius: 4px;
+      padding: 0.1em 0.35em;
+    }
+
+    .prose pre {
+      direction: ltr;
+      text-align: left;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      overflow-x: auto;
+      margin: 0.5em 0;
+    }
+
+    .prose pre code {
+      background: transparent;
+      padding: 0;
+      font-size: 0.84em;
+    }
+
+    .prose a[href] {
+      color: var(--link);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .prose a[href]:hover {
+      color: var(--link-hover);
+    }
+
+    .typing-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 2px;
+    }
+
+    .typing-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: var(--text-muted);
+      animation: twinBounce 1.1s infinite ease-in-out;
+    }
+
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.32s;
+    }
+
+    @keyframes twinBounce {
+      0%, 80%, 100% {
+        transform: translateY(0);
+        opacity: 0.45;
+      }
+      40% {
+        transform: translateY(-4px);
+        opacity: 1;
+      }
+    }
+
+    .twin-composer {
+      flex-shrink: 0;
+      padding: 10px 16px 14px;
+      background-color: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .composer-form {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      background-color: var(--surface-alt);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 6px 8px 6px 12px;
+      transition: border-color 0.15s ease;
+    }
+
+    .composer-form:focus-within {
+      border-color: var(--accent);
+    }
+
+    .composer-input {
+      flex: 1 1 auto;
+      min-width: 0;
+      min-height: 24px;
+      max-height: 120px;
+      resize: none;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.94rem;
+      line-height: 1.45;
+      padding: 4px 0;
+      unicode-bidi: plaintext;
+      text-align: start;
+      outline: none;
+    }
+
+    .composer-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .send-btn {
+      flex-shrink: 0;
+      height: 34px;
+      min-width: 68px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 8px;
+      background-color: var(--accent);
+      color: #ffffff;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease, opacity 0.15s ease;
+    }
+
+    .send-btn:hover:not(:disabled) {
+      background-color: var(--accent-hover);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 480px) {
+      .twin-header {
+        padding: 10px 12px;
+      }
+      .twin-messages {
+        padding: 12px;
+      }
+      .twin-composer {
+        padding: 8px 12px 12px;
+      }
+      .twin-subtitle {
+        display: none;
+      }
+      .msg-row,
+      .msg-row--assistant {
+        max-width: 96%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="twin-app">
+    <header class="twin-header">
+      <div class="twin-brand">
+        <div class="twin-avatar" aria-hidden="true">ZW</div>
+        <div class="twin-title-wrap">
+          <h1 class="twin-title">Zyad Waled Talat — Digital Twin</h1>
+          <p class="twin-subtitle">CV-grounded AI assistant · English &amp; العربية</p>
+        </div>
+      </div>
+      <div class="twin-header-actions">
+        <button
+          id="theme-toggle"
+          type="button"
+          class="icon-btn"
+          aria-label="Toggle color theme"
+          title="Toggle Light / Dark theme"
+        >
+          Light
+        </button>
+        <button
+          id="clear-chat-btn"
+          type="button"
+          class="icon-btn"
+          aria-label="Clear conversation"
+          title="Start a fresh conversation"
+        >
+          Clear
+        </button>
+      </div>
+    </header>
+
+    <main id="messages" class="twin-messages" aria-live="polite" aria-label="Chat conversation"></main>
+
+    <footer class="twin-composer">
+      <form id="chat-form" class="composer-form" novalidate>
+        <label class="sr-only" for="chat-input" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">
+          Message Zyad's Digital Twin
+        </label>
+        <textarea
+          id="chat-input"
+          class="composer-input"
+          rows="1"
+          dir="auto"
+          placeholder="Ask about Zyad's projects, skills, or background (EN / العربية)..."
+          autocomplete="off"
+        ></textarea>
+        <button
+          id="send-btn"
+          type="submit"
+          class="send-btn"
+          disabled
+          aria-disabled="true"
+        >
+          Send
+        </button>
+      </form>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      if (window.self !== window.top) {
+        document.body.classList.add("is-embedded");
+      }
+
+      const ARABIC_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/g;
+      const LATIN_RE = /[A-Za-z]/g;
+      const STRONG_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFFA-Za-z]/;
+      const BLOCK_SELECTOR = "p, ul, ol, li, blockquote, h1, h2, h3, h4, h5, h6, table, th, td";
+      const LTR_RUN_RE = /(?:https?:\/\/[^\s\u0600-\u06FF]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\.?[A-Za-z0-9]+(?:[#+./_-]+[A-Za-z0-9]+)*[#+-]*(?:\s+[A-Za-z0-9][A-Za-z0-9._#+/-]*)*)/g;
+
+      const STARTER_PROMPTS = [
+        { label: "Tell me about Zyad's background & GPA", text: "Tell me about Zyad's background, education, and current GPA.", dir: "ltr" },
+        { label: "What projects has Zyad built?", text: "What projects has Zyad built?", dir: "ltr" },
+        { label: "What technical skills & courses does Zyad have?", text: "What technical skills and courses does Zyad have?", dir: "ltr" },
+        { label: "إيه أهم مشاريع ومهارات زياد؟", text: "أهلاً! إيه أهم مشاريع ومهارات زياد؟", dir: "rtl" }
+      ];
+
+      const messagesEl = document.getElementById("messages");
+      const formEl = document.getElementById("chat-form");
+      const inputEl = document.getElementById("chat-input");
+      const sendBtn = document.getElementById("send-btn");
+      const themeToggleBtn = document.getElementById("theme-toggle");
+      const clearBtn = document.getElementById("clear-chat-btn");
+
+      let history = [];
+      let isSending = false;
+
+      function applyTheme(theme, persist) {
+        const clean = theme === "light" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", clean);
+        document.documentElement.classList.toggle("dark", clean === "dark");
+        if (themeToggleBtn) {
+          themeToggleBtn.textContent = clean === "dark" ? "Light" : "Dark";
+          themeToggleBtn.setAttribute(
+            "aria-label",
+            clean === "dark" ? "Switch to light mode" : "Switch to dark mode"
+          );
+        }
+        if (persist) {
+          try {
+            localStorage.setItem("twin_theme", clean);
+          } catch (_) {
+            // ignore storage quota/privacy restrictions
+          }
+        }
+      }
+
+      applyTheme(document.documentElement.getAttribute("data-theme") || "dark", false);
+
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", function () {
+          const cur = document.documentElement.getAttribute("data-theme");
+          applyTheme(cur === "dark" ? "light" : "dark", true);
+        });
+      }
+
+      window.addEventListener("message", function (event) {
+        if (event && event.data && event.data.type === "twin-theme") {
+          const next = String(event.data.theme || "").toLowerCase();
+          if (next === "light" || next === "dark") {
+            applyTheme(next, true);
+          }
+        }
+      });
+
+      function escapeHtml(text) {
+        return String(text || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function renderInlineMarkdown(text) {
+        const tokens = [];
+        function putToken(html) {
+          const key = "\u0000TWIN" + tokens.length + "\u0000";
+          tokens.push(html);
+          return key;
+        }
+
+        let working = String(text || "").replace(/\u0000/g, "");
+
+        // 1. Inline code spans
+        working = working.replace(/`([^`\n]+)`/g, function (_, code) {
+          return putToken('<code dir="ltr">' + escapeHtml(code) + "</code>");
+        });
+
+        // 2. Markdown links [label](https://...)
+        working = working.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/gi, function (_, label, rawUrl) {
+          const cleanUrl = rawUrl.replace(/[.,;:!?)]+$/, "");
+          if (!/^https?:\/\//i.test(cleanUrl)) return label;
+          return putToken(
+            '<a dir="ltr" href="' +
+              escapeHtml(cleanUrl) +
+              '" target="_blank" rel="noopener noreferrer">' +
+              escapeHtml(label) +
+              "</a>"
+          );
+        });
+
+        // 3. Bare http/https URLs
+        working = working.replace(/https?:\/\/[^\s<>"'`\u0600-\u06FF]+/gi, function (rawUrl) {
+          let url = rawUrl;
+          let trailing = "";
+          while (/[.,;:!?)]$/.test(url)) {
+            if (url.endsWith(")") && (url.match(/\(/g) || []).length >= (url.match(/\)/g) || []).length) {
+              break;
+            }
+            trailing = url.slice(-1) + trailing;
+            url = url.slice(0, -1);
+          }
+          if (!/^https?:\/\//i.test(url)) return rawUrl;
+          return (
+            putToken(
+              '<a dir="ltr" href="' +
+                escapeHtml(url) +
+                '" target="_blank" rel="noopener noreferrer">' +
+                escapeHtml(url) +
+                "</a>"
+            ) + trailing
+          );
+        });
+
+        // 4. Escape remaining plain text and render simple **bold**
+        working = escapeHtml(working);
+        working = working.replace(/\*\*([^\n*][^*\n]*?)\*\*/g, "<strong>$1</strong>");
+
+        // 5. Restore escaped code/link tokens
+        return working.replace(/\u0000TWIN(\d+)\u0000/g, function (_, idx) {
+          return tokens[Number(idx)] || "";
+        });
+      }
+
+      function renderMarkdownSafe(markdownText) {
+        const lines = String(markdownText || "").replace(/\r\n?/g, "\n").split("\n");
+        const htmlParts = [];
+        let i = 0;
+
+        while (i < lines.length) {
+          const line = lines[i];
+
+          if (!line.trim()) {
+            i += 1;
+            continue;
+          }
+
+          // Fenced code block
+          if (/^```/.test(line.trim())) {
+            i += 1;
+            const codeLines = [];
+            while (i < lines.length && !/^```/.test(lines[i].trim())) {
+              codeLines.push(lines[i]);
+              i += 1;
+            }
+            if (i < lines.length) i += 1;
+            htmlParts.push('<pre dir="ltr"><code>' + escapeHtml(codeLines.join("\n")) + "</code></pre>");
+            continue;
+          }
+
+          // Heading (#, ##, ###)
+          const headingMatch = line.match(/^(#{1,3})\s+(.+)$/);
+          if (headingMatch) {
+            const level = headingMatch[1].length;
+            htmlParts.push("<h" + level + ">" + renderInlineMarkdown(headingMatch[2]) + "</h" + level + ">");
+            i += 1;
+            continue;
+          }
+
+          // Blockquote
+          if (/^\s*>\s?/.test(line)) {
+            const quoteLines = [];
+            while (i < lines.length && /^\s*>\s?/.test(lines[i])) {
+              quoteLines.push(lines[i].replace(/^\s*>\s?/, ""));
+              i += 1;
+            }
+            htmlParts.push("<blockquote><p>" + quoteLines.map(renderInlineMarkdown).join("<br>") + "</p></blockquote>");
+            continue;
+          }
+
+          // Unordered list
+          if (/^\s*[-*•]\s+/.test(line)) {
+            const items = [];
+            while (i < lines.length && /^\s*[-*•]\s+/.test(lines[i])) {
+              items.push("<li>" + renderInlineMarkdown(lines[i].replace(/^\s*[-*•]\s+/, "")) + "</li>");
+              i += 1;
+            }
+            htmlParts.push("<ul>" + items.join("") + "</ul>");
+            continue;
+          }
+
+          // Ordered list
+          if (/^\s*\d+[.)]\s+/.test(line)) {
+            const items = [];
+            while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) {
+              items.push("<li>" + renderInlineMarkdown(lines[i].replace(/^\s*\d+[.)]\s+/, "")) + "</li>");
+              i += 1;
+            }
+            htmlParts.push("<ol>" + items.join("") + "</ol>");
+            continue;
+          }
+
+          // Paragraph
+          const paraLines = [];
+          while (
+            i < lines.length &&
+            lines[i].trim() &&
+            !/^```/.test(lines[i].trim()) &&
+            !/^#{1,3}\s+/.test(lines[i]) &&
+            !/^\s*>\s?/.test(lines[i]) &&
+            !/^\s*[-*•]\s+/.test(lines[i]) &&
+            !/^\s*\d+[.)]\s+/.test(lines[i])
+          ) {
+            paraLines.push(lines[i]);
+            i += 1;
+          }
+          htmlParts.push("<p>" + paraLines.map(renderInlineMarkdown).join("<br>") + "</p>");
+        }
+
+        return htmlParts.join("");
+      }
+
+      function ownTextForDirection(el) {
+        const clone = el.cloneNode(true);
+        const tag = el.tagName;
+        if (tag === "UL" || tag === "OL" || tag === "LI") {
+          clone.querySelectorAll("ul, ol, pre, code, a[href]").forEach(function (n) {
+            n.remove();
+          });
+        } else {
+          clone.querySelectorAll("pre, code, a[href]").forEach(function (n) {
+            n.remove();
+          });
+        }
+        return (clone.textContent || "").trim();
+      }
+
+      function detectDirection(text) {
+        if (!text) return null;
+        const firstStrong = text.match(STRONG_RE);
+        if (!firstStrong) return null;
+        const arabicMatches = text.match(ARABIC_RE) || [];
+        if (arabicMatches.length === 0) return "ltr";
+        const firstIsArabic = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/.test(
+          firstStrong[0]
+        );
+        if (firstIsArabic) return "rtl";
+        const latinMatches = text.match(LATIN_RE) || [];
+        const total = arabicMatches.length + latinMatches.length;
+        return total > 0 && arabicMatches.length / total >= 0.25 ? "rtl" : "ltr";
+      }
+
+      function isolateInlineLtrSpans(root) {
+        const rtlBlocks = Array.from(root.querySelectorAll('.prose [dir="rtl"], [dir="rtl"]'));
+        if (root.matches && root.matches('[dir="rtl"]')) {
+          rtlBlocks.unshift(root);
+        }
+        for (const rtlEl of rtlBlocks) {
+          const walker = document.createTreeWalker(rtlEl, NodeFilter.SHOW_TEXT);
+          const textNodes = [];
+          let cur;
+          while ((cur = walker.nextNode())) {
+            const parent = cur.parentElement;
+            if (!parent) continue;
+            if (parent.closest("pre, code, a[href], bdi, script, style, textarea, input")) continue;
+            const nearestDir = parent.closest("[dir]");
+            if (nearestDir && nearestDir !== rtlEl && nearestDir.getAttribute("dir") === "ltr") continue;
+            LTR_RUN_RE.lastIndex = 0;
+            if (LTR_RUN_RE.test(cur.nodeValue || "")) {
+              textNodes.push(cur);
+            }
+          }
+          for (const textNode of textNodes) {
+            const value = textNode.nodeValue || "";
+            LTR_RUN_RE.lastIndex = 0;
+            let lastIndex = 0;
+            let match;
+            let wrapped = 0;
+            const frag = document.createDocumentFragment();
+            while ((match = LTR_RUN_RE.exec(value)) !== null) {
+              const start = match.index;
+              const rawToken = match[0];
+              const cleanToken = rawToken.replace(/[.,;:!?)]+$/, "");
+              const trailing = rawToken.slice(cleanToken.length);
+              if (!cleanToken) continue;
+              if (start > lastIndex) {
+                frag.appendChild(document.createTextNode(value.slice(lastIndex, start)));
+              }
+              const bdi = document.createElement("bdi");
+              bdi.setAttribute("dir", "ltr");
+              bdi.setAttribute("data-twin-ltr", "1");
+              bdi.textContent = cleanToken;
+              frag.appendChild(bdi);
+              if (trailing) {
+                frag.appendChild(document.createTextNode(trailing));
+              }
+              lastIndex = start + rawToken.length;
+              wrapped += 1;
+            }
+            if (wrapped > 0) {
+              if (lastIndex < value.length) {
+                frag.appendChild(document.createTextNode(value.slice(lastIndex)));
+              }
+              textNode.replaceWith(frag);
+            }
+          }
+        }
+      }
+
+      function applyBidiToRoot(proseEl) {
+        if (!proseEl) return;
+        const blocks = Array.from(proseEl.querySelectorAll(BLOCK_SELECTOR));
+        for (const el of blocks) {
+          const dir = detectDirection(ownTextForDirection(el));
+          if (dir && el.getAttribute("dir") !== dir) {
+            el.setAttribute("dir", dir);
+          }
+        }
+        proseEl.querySelectorAll("pre, code, a[href], bdi").forEach(function (el) {
+          el.setAttribute("dir", "ltr");
+        });
+        isolateInlineLtrSpans(proseEl);
+      }
+
+      function scrollToBottom() {
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      function renderWelcomeState() {
+        messagesEl.innerHTML = "";
+        const card = document.createElement("section");
+        card.className = "welcome-card";
+        card.innerHTML =
+          "<h2>Ask Zyad's Digital Twin</h2>" +
+          "<p>Ask anything about Zyad Waled Talat's projects, technical stack, courses, education, or how to contact him.</p>" +
+          '<p class="welcome-ar" dir="rtl">اسألني بالعربي أو بالإنجليزي عن مشاريع <bdi dir="ltr">Zyad</bdi> ومهاراته ودراسته أو لو حابب تتواصل معاه.</p>' +
+          '<div class="chips-grid" id="starter-chips"></div>';
+        const chipsGrid = card.querySelector("#starter-chips");
+        STARTER_PROMPTS.forEach(function (item) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "chip-btn";
+          btn.setAttribute("dir", item.dir);
+          btn.textContent = item.label;
+          btn.addEventListener("click", function () {
+            if (!isSending) {
+              sendMessageText(item.text);
+            }
+          });
+          chipsGrid.appendChild(btn);
+        });
+        messagesEl.appendChild(card);
+      }
+
+      function removeWelcomeState() {
+        const welcome = messagesEl.querySelector(".welcome-card");
+        if (welcome) welcome.remove();
+      }
+
+      function appendMessage(role, text, isError) {
+        removeWelcomeState();
+        const row = document.createElement("div");
+        row.className = "msg-row msg-row--" + role + (isError ? " msg-row--error" : "");
+
+        const bubble = document.createElement("div");
+        bubble.className = "msg-bubble";
+
+        const prose = document.createElement("div");
+        prose.className = "prose";
+        if (role === "user") {
+          const safeLines = String(text || "").replace(/\r\n?/g, "\n").split("\n");
+          prose.innerHTML = "<p>" + safeLines.map(escapeHtml).join("<br>") + "</p>";
+        } else {
+          prose.innerHTML = renderMarkdownSafe(text);
+        }
+        applyBidiToRoot(prose);
+        bubble.appendChild(prose);
+        row.appendChild(bubble);
+
+        if (role === "assistant" && !isError) {
+          const meta = document.createElement("div");
+          meta.className = "msg-meta";
+          const copyBtn = document.createElement("button");
+          copyBtn.type = "button";
+          copyBtn.className = "copy-btn";
+          copyBtn.textContent = "Copy";
+          copyBtn.setAttribute("aria-label", "Copy response");
+          copyBtn.addEventListener("click", function () {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(text).then(
+                function () {
+                  copyBtn.textContent = "Copied";
+                  setTimeout(function () {
+                    copyBtn.textContent = "Copy";
+                  }, 1500);
+                },
+                function () {
+                  copyBtn.textContent = "Copy";
+                }
+              );
+            }
+          });
+          meta.appendChild(copyBtn);
+          row.appendChild(meta);
+        }
+
+        messagesEl.appendChild(row);
+        scrollToBottom();
+        return row;
+      }
+
+      function appendTypingIndicator() {
+        removeWelcomeState();
+        const row = document.createElement("div");
+        row.className = "msg-row msg-row--assistant";
+        row.setAttribute("aria-label", "Digital Twin is thinking");
+        const bubble = document.createElement("div");
+        bubble.className = "msg-bubble";
+        bubble.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+        row.appendChild(bubble);
+        messagesEl.appendChild(row);
+        scrollToBottom();
+        return row;
+      }
+
+      function syncComposerState() {
+        inputEl.style.height = "auto";
+        inputEl.style.height = Math.min(inputEl.scrollHeight, 120) + "px";
+        const empty = inputEl.value.trim().length === 0;
+        const disabled = isSending || empty;
+        sendBtn.disabled = disabled;
+        sendBtn.setAttribute("aria-disabled", disabled ? "true" : "false");
+      }
+
+      async function sendMessageText(rawText) {
+        const text = String(rawText || "").trim();
+        if (!text || isSending) return;
+
+        isSending = true;
+        inputEl.value = "";
+        syncComposerState();
+
+        const turnHistory = history.slice();
+        appendMessage("user", text, false);
+        const typingRow = appendTypingIndicator();
+
+        try {
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text, history: turnHistory })
+          });
+
+          let data = {};
+          try {
+            data = await res.json();
+          } catch (_) {
+            data = {};
+          }
+
+          typingRow.remove();
+
+          if (!res.ok) {
+            const errMsg = data.error || "Unable to reach the Digital Twin right now. Please try again.";
+            appendMessage("assistant", errMsg, true);
+            return;
+          }
+
+          const reply = String(data.reply || "").trim() || "I couldn't generate a response right now. Please try again.";
+          appendMessage("assistant", reply, false);
+          history.push({ role: "user", content: text });
+          history.push({ role: "assistant", content: reply });
+        } catch (_) {
+          typingRow.remove();
+          appendMessage(
+            "assistant",
+            "Network error while reaching the Digital Twin. Please check your connection and try again.",
+            true
+          );
+        } finally {
+          isSending = false;
+          syncComposerState();
+          inputEl.focus();
+        }
+      }
+
+      inputEl.addEventListener("input", syncComposerState);
+
+      inputEl.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          if (!isSending && inputEl.value.trim().length > 0) {
+            sendMessageText(inputEl.value);
+          }
+        }
+      });
+
+      formEl.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!isSending && inputEl.value.trim().length > 0) {
+          sendMessageText(inputEl.value);
+        }
+      });
+
+      if (clearBtn) {
+        clearBtn.addEventListener("click", function () {
+          if (isSending) return;
+          history = [];
+          renderWelcomeState();
+          syncComposerState();
+        });
+      }
+
+      renderWelcomeState();
+      syncComposerState();
+    })();
+  </script>
+</body>
+</html>
